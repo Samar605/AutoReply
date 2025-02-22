@@ -1,5 +1,5 @@
 async function getAIReply() {
-    const apiKey = "YOUR_OPENAI_API_KEY";  // Replace with your actual API key
+    const apiKey = "YOUR_OPENAI_API_KEY";  // Replace with your actual OpenAI API key
     const userMessage = document.getElementById("commentBox").value;
 
     if (!userMessage) {
