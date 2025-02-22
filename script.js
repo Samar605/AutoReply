@@ -1,41 +1,35 @@
 async function getAIReply() {
-    const userInput = document.getElementById("userInput").value;
-    const responseElement = document.getElementById("aiResponse");
+    const apiKey = "YOUR_OPENAI_API_KEY";  // Replace with your actual API key
+    const userMessage = document.getElementById("commentBox").value;
 
-    if (!userInput) {
-        responseElement.textContent = "Please enter a comment.";
+    if (!userMessage) {
+        alert("Please enter a comment.");
         return;
     }
 
-    responseElement.textContent = "Generating reply...";
+    const url = "https://api.openai.com/v1/completions";
+    const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+    };
+
+    const body = JSON.stringify({
+        model: "text-davinci-003",
+        prompt: `Generate a reply for this comment: "${userMessage}"`,
+        max_tokens: 50
+    });
 
     try {
-        const response = await fetch("https://api.openai.com/v1/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "import OpenAI from "openai";
-const openai = new OpenAI();
-const completion = await openai.chat.completions.create({
-    model: "gpt-4o",
-    store: true,
-    messages: [
-        {"role": "user", "content": "write a haiku about ai"}
-    ]
-});
-"
-            },
-            body: JSON.stringify({
-                model: "text-davinci-003",
-                prompt: `Generate a smart reply for: ${userInput}`,
-                max_tokens: 50
-            })
-        });
-
+        const response = await fetch(url, { method: "POST", headers, body });
         const data = await response.json();
-        responseElement.textContent = data.choices[0].text.trim();
+
+        if (data.choices && data.choices.length > 0) {
+            document.getElementById("replyBox").innerText = data.choices[0].text;
+        } else {
+            document.getElementById("replyBox").innerText = "Error: No response received.";
+        }
     } catch (error) {
-        responseElement.textContent = "Error generating reply. Please try again.";
-        console.error(error);
+        console.error("Error fetching AI response:", error);
+        document.getElementById("replyBox").innerText = "Error: Could not get reply.";
     }
 }
